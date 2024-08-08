@@ -8,7 +8,6 @@ import numpy as np
 from scipy.linalg import expm
 from scipy.optimize import least_squares
 
-import matplotlib.pyplot as plt
 
 def first_passage_time_dist(L, start, leak, k0, time):
     '''
@@ -131,19 +130,3 @@ def eig_decomposition(p, V):
     gramian = V.transpose().dot(V) # Gramian matrix (matrix of dot products of eigenvectors)
 
     return np.linalg.inv(gramian).dot(components)
-
-
-
-
-
-
-time = np.arange(0, 30, 0.01)
-
-coeff_true = [0.85]
-decay_rates_true = [-1.65, -0.21]
-
-y = f_model(time, coeff_true, decay_rates_true) + 0.1*np.random.rand(time.shape[0])
-
-result = fit_exponentials(time, y, 2, p0=[0.1, -1, -0.1])
-print(result)
-
