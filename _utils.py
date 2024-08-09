@@ -76,20 +76,6 @@ def fit_exponentials(x, y, N, p0=None):
     return result
 
 
-def MSE_exponential_fit(x, y, theta):
-    '''
-    MEAN SQUARED ERROR OF THE FIT GIVEN A SET THETA OF PARAMETER VALUES AS PREDICTED BY FITTING
-    '''
-
-    N = int((len(theta) + 1)/2)
-
-    # Output should be a numpy array (ensure x is a numpy array)
-    fit_result = f_model(x, theta[:N-1], theta[N-1:])
-
-
-    return np.mean(np.power(fit_result - y, 2))
-
-
 def eig_L(L, leak, k0):
     '''
     EIGENVALUES AND NORMALIZED EIGENVECTORS OF A GIVEN RATE MATRIX INCLUDING THE LEAK
