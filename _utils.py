@@ -56,8 +56,12 @@ def f_model(t, coefficients, decay_rates):
         return sum([x*np.exp(y*t) for x,y in zip(coefficients, decay_rates[:-1])]) + last_coeff*np.exp(decay_rates[-1]*t)
 
 
-def fit_exponentials(t, y, N, x0=None, gtol=None):
-    ''' USE scipy_optimize.least_squares TO FIT DATA TO A SUM OF EXPONENTIAL TERMS '''
+def fit_exponentials(t, y, N, x0=None, gtol=None, num_guesses=1):
+    '''
+    USE scipy_optimize.least_squares TO FIT DATA TO A SUM OF EXPONENTIAL TERMS
+    
+    INPUT AN INITIAL GUESS AND OPTIONALLY TRY A SPECIFIED NUMBER OF ADDITIONAL RANDOM INITIAL GUESSES AND SELECT THE BEST ONE
+    '''
     
     # Set the initial guess to a list of ones if not specified
     if x0==None:
@@ -73,6 +77,20 @@ def fit_exponentials(t, y, N, x0=None, gtol=None):
         return ft - y
     
     result = least_squares(residuals, x0, gtol=gtol)
+
+    # Carry out optimizaton additional times with randomized intial guesses
+    if num_guesses > 1:
+        for i in range(num_guesses-1):
+            coeff_rand_guess = 2*np.random.rand(N - 1) - 1 # Guess random values between -1 and 1 for coefficients
+            rate_rand_guess = -5*np.random.rand(N) # Guess random values -5 and 0 for decay rates
+            rand_guess = np.append(coeff_rand_guess, rate_rand_guess)
+
+            # Carry out optimization with randomly guessed initial values
+            result_temp = least_squares(residuals, rand_guess, gtol=gtol)
+
+            if result_temp["cost"] < result["cost"]:
+                result = result_temp # If the random guess minimizes the cost function more effectively, replace the old result
+
     return result
 
 

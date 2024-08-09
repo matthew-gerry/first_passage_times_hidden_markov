@@ -39,15 +39,15 @@ print("Rate matrix:\n", L)
 dt = 0.01; tmax = 15
 time = np.arange(0, tmax, dt)
 
-start_site = 0; leak_site = N-1 # Choice of start and leak sites
+start_site = 0; leak_site = N - 1 # Choice of start and leak sites
 k0 = 0.5 # Leak rate
 
 # Calculate the exact FPTD for this rate matrix and choice of start/leak sites
 FPTD = first_passage_time_dist(L, start_site, leak_site, k0, time)
 
 # Fit the FPTD to sums of two and eight exponentials
-fit_result_2 = fit_exponentials(time, FPTD, 2, x0=[0.1, -0.5, -0.1])
-fit_result_8 = fit_exponentials(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -1, -1, -1, -1, -1, -0.5, -0.5, -0.1])
+fit_result_2 = fit_exponentials(time, FPTD, 2, x0=[0.1, -0.5, -0.1], num_guesses=4)
+fit_result_8 = fit_exponentials(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -1, -1, -1, -1, -1, -0.5, -0.5, -0.1], num_guesses=10)
 
 print(fit_result_2)
 print(fit_result_8)
