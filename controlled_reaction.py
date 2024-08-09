@@ -1,7 +1,7 @@
 '''
-fpt_fitting.py
+controlled_reaction.py
 
-Fit the first passage time distribution as determined by a rate matrix with a specified "leak state" to a sum of exponentials. Evaluate the quality of such a fit if the number of terms in the model function is less than the number of states in the network.
+Fit the first passage time distribution as determined by a rate matrix with a specified "leak state" to a sum of exponentials. Evaluate the quality of such a fit if the number of terms in the model function is less than the number of states in the network. Focus on a "controlled reaction" where transitions between sites within each of two neighbourhoods occur on one timescale, while transitions between the two neigbourhoods occur on another timescale.
 
 Matthew Gerry, August 2024
 '''

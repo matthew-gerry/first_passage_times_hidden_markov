@@ -56,23 +56,23 @@ def f_model(t, coefficients, decay_rates):
         return sum([x*np.exp(y*t) for x,y in zip(coefficients, decay_rates[:-1])]) + last_coeff*np.exp(decay_rates[-1]*t)
 
 
-def fit_exponentials(x, y, N, p0=None):
+def fit_exponentials(t, y, N, x0=None, gtol=None):
     ''' USE scipy_optimize.least_squares TO FIT DATA TO A SUM OF EXPONENTIAL TERMS '''
     
     # Set the initial guess to a list of ones if not specified
-    if p0==None:
-        p0 = (2*N - 1)*[1]
-    elif len(p0) != 2*N - 1:
+    if x0==None:
+        x0 = (2*N - 1)*[1]
+    elif len(x0) != 2*N - 1:
         raise ValueError("Initial guess must include 2*N - 1 parameter values.")
 
     # Define a function to calculate the residuals
     def residuals(theta):
         coefficients = theta[:N-1]
         decay_rates = theta[N-1:]
-        fx = f_model(x, coefficients, decay_rates)
-        return fx - y
+        ft = f_model(t, coefficients, decay_rates)
+        return ft - y
     
-    result = least_squares(residuals, p0)
+    result = least_squares(residuals, x0, gtol=gtol)
     return result
 
 
