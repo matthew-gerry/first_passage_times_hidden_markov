@@ -36,7 +36,7 @@ L -= np.diagflat(sum(L)) # Set diagonal elements to ensure all columns sum to ze
 print("Rate matrix:\n", L)
 
 # Calculate the first passage time distribution based on this rate matrix
-dt = 0.01; tmax = 15
+dt = 0.01; tmax = 30
 time = np.arange(0, tmax, dt)
 
 start_site = 0; leak_site = N - 1 # Choice of start and leak sites
@@ -46,8 +46,10 @@ k0 = 0.5 # Leak rate
 FPTD = first_passage_time_dist(L, start_site, leak_site, k0, time)
 
 # Fit the FPTD to sums of two and eight exponentials
-fit_result_2 = fit_exponentials(time, FPTD, 2, x0=[0.1, -0.5, -0.1], num_guesses=4)
-fit_result_8 = fit_exponentials(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -1, -1, -1, -1, -1, -0.5, -0.5, -0.1], num_guesses=10)
+# fit_result_2 = fit_exponentials(time, FPTD, 2, x0=[0.1, -0.5, -0.1], num_guesses=4)
+# fit_result_8 = fit_exponentials(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -1, -1, -1, -1, -1, -0.5, -0.5, -0.1], num_guesses=10)
+fit_result_2 = fit_exponentials_adam(time, FPTD, 2, x0=[0.1, -0.5, -0.1])
+fit_result_8 = fit_exponentials_adam(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -10, -10, -1, -1, -1, -0.5, -0.5, -0.1])
 
 print(fit_result_2)
 print(fit_result_8)

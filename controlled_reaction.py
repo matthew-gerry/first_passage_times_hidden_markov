@@ -49,8 +49,11 @@ k0 = 0.5 # Leak rate
 FPTD = first_passage_time_dist(L, start_site, leak_site, k0, time)
 
 # Fit the FPTD to sums of two and six exponentials
-fit_result_2 = fit_exponentials(time, FPTD, 2, p0=[0.1, -0.5, -0.1])
-fit_result_6 = fit_exponentials(time, FPTD, 6, p0=[0.1, 0.1, 0.1, -0.1, -0.1, -10, -1, -1, -0.5, -0.5, -0.1])
+fit_result_2 = fit_exponentials(time, FPTD, 2, x0=[0.1, -0.5, -0.1])
+fit_result_6 = fit_exponentials(time, FPTD, 6, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -10, -1, -1, -0.5, -0.5, -0.1])
+
+print(fit_result_2)
+print(fit_result_6)
 
 # Extract the parameter values estimated by the fits
 theta2 = fit_result_2["x"]; theta6 = fit_result_6["x"]
@@ -60,8 +63,8 @@ fit2 = f_model(time, theta2[:1], theta2[1:])
 fit6 = f_model(time, theta6[:5], theta6[5:])
 
 # Display the mean squared error associated with each fit
-print("MSE with N=2: " + str(np.mean(np.power(fit_result_2["fun"], 2))))
-print("MSE with N=6: " + str(np.mean(np.power(fit_result_6["fun"], 2))))
+# print("MSE with N=2: " + str(np.mean(np.power(fit_result_2["fun"], 2))))
+# print("MSE with N=6: " + str(np.mean(np.power(fit_result_6["fun"], 2))))
 
 # Compare the fit parameters to the true eigenvalues in the case of a coarse-grained fit and an exact fit
 V, D = eig_L(L, leak_site, k0)
