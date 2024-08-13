@@ -14,9 +14,9 @@ import matplotlib.pyplot as plt
 from _utils import *
 
 # Define the rate matrix according to the below network structure. The gate is represented by the double dash
-#           2    5
-#           |    |       
-#   0 - 1 - 3 -- 4 - 6
+#           2    
+#           |           
+#   0 - 1 - 3 -- 4 - 5 - 6 
 #                |
 #                7
 
@@ -28,7 +28,7 @@ kfast = 10
 kslow = 1
 
 L[1,0] = kfast; L[3,1] = kfast; L[3,2] = kfast # Left neighbourhood
-L[4,5] = kfast; L[4,6] = kfast; L[4,7] = kfast # Right neighbourhood
+L[4,5] = kfast; L[5,6] = kfast; L[4,7] = kfast # Right neighbourhood
 L[4,3] = kslow # Gate
 L += L.transpose() # All transitions symmetric
 L -= np.diagflat(sum(L)) # Set diagonal elements to ensure all columns sum to zero (the leak is accounted for later)
@@ -46,10 +46,10 @@ k0 = 0.5 # Leak rate
 FPTD = first_passage_time_dist(L, start_site, leak_site, k0, time)
 
 # Fit the FPTD to sums of two and eight exponentials
-# fit_result_2 = fit_exponentials(time, FPTD, 2, x0=[0.1, -0.5, -0.1], num_guesses=4)
-# fit_result_8 = fit_exponentials(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -1, -1, -1, -1, -1, -0.5, -0.5, -0.1], num_guesses=10)
+# fit_result_2 = fit_exponentials(time, FPTD, 2, x0=[0.1, -0.5, -0.1], num_guesses=1)
+# fit_result_8 = fit_exponentials(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -1, -1, -1, -1, -1, -0.5, -0.5, -0.1], num_guesses=1, weight_short=False)
 fit_result_2 = fit_exponentials_adam(time, FPTD, 2, x0=[0.1, -0.5, -0.1])
-fit_result_8 = fit_exponentials_adam(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -10, -10, -1, -1, -1, -0.5, -0.5, -0.1])
+fit_result_8 = fit_exponentials_adam(time, FPTD, 8, x0=[0.1, 0.1, 0.1, -0.1, -0.1, -0.1, -0.1, -10, -10, -1, -1, -1, -0.5, -0.5, -0.1], weight_short=True)
 
 print(fit_result_2)
 print(fit_result_8)
