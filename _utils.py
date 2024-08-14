@@ -96,8 +96,8 @@ def fit_exponentials(t, y, N, x0=None, gtol=None, num_guesses=1, weight_short=Fa
     # Carry out optimizaton additional times with randomized intial guesses
     if num_guesses > 1:
         for i in range(num_guesses-1):
-            coeff_rand_guess = 2*np.random.rand(N - 1) - 1 # Guess random values between -1 and 1 for coefficients
-            rate_rand_guess = -5*np.random.rand(N) # Guess random values -5 and 0 for decay rates
+            coeff_rand_guess = np.random.rand(N - 1) - 1 # Guess random values between -0.5 and 0.5 for coefficients
+            rate_rand_guess = -3*np.random.rand(N) # Guess random values -3 and 0 for decay rates
             rand_guess = np.append(coeff_rand_guess, rate_rand_guess)
 
             # Carry out optimization with randomly guessed initial values
