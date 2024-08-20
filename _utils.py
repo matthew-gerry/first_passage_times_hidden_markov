@@ -9,9 +9,9 @@ import numpy as np
 from scipy.linalg import expm
 from scipy.optimize import least_squares
 
-from tensorflow import Variable, GradientTape, cast, float32
-import tensorflow.math as tfmath
-import tensorflow.keras.optimizers as ko
+# from tensorflow import Variable, GradientTape, cast, float32
+# import tensorflow.math as tfmath
+# import tensorflow.keras.optimizers as ko
 
 
 def first_passage_time_dist(L, start, leak, k0, time):
@@ -163,7 +163,7 @@ def fit_exponentials_adam(t, y, N, x0=None, num_steps=200, learning_rate=0.1, ep
 
 def eig_L(L, leak, k0):
     '''
-    EIGENVALUES AND NORMALIZED EIGENVECTORS OF A GIVEN RATE MATRIX INCLUDING THE LEAK
+    EIGENVALUES AND NORMALIZED EIGENVECTORS OF A GIVEN RATE MATRIX INCLUDING THE LEAK.
     '''
 
     N = np.shape(L)[0] # Size of the hidden network
@@ -188,17 +188,37 @@ def eig_L(L, leak, k0):
 
 def eig_decomposition(p, V):
     '''
-    DECOMPOSE A POPULATION DISTRIBUTION p IN TERMS OF THE COLUMNS OF V (NORMALIZED EIGENVECTORS)
+    DECOMPOSE A POPULATION DISTRIBUTION p IN TERMS OF THE COLUMNS OF V (NORMALIZED EIGENVECTORS). 
     
-    RETURNS BOTH THE COEFFICIENTS OF THE DECOMPOSITION AND THE 
+    RETURNS THE COEFFICIENTS OF THE DECOMPOSITION.
     '''
 
     N = np.shape(V)[0] # Size of the hidden network
 
     if sum(V).any() != 1 or np.shape(V)[0] != np.shape(V)[1]:
-        raise ValueError("V must be a square matrix of eigenvectors whose columns each sum to unity")
+        raise ValueError("V must be a square matrix of eigenvectors whose columns each sum to unity.")
         
     components = p.dot(V) # Components of p along each eigenvector
     gramian = V.transpose().dot(V) # Gramian matrix (matrix of dot products of eigenvectors)
 
     return np.linalg.inv(gramian).dot(components)
+
+
+def fpt_moments(time, FPTD, k, epsilon=0.01):
+    ''' 
+    NUMERICALLY CALCULATE THE kTH MOMENT OF THE GIVEN FIRST PASSAGE TIME DISTRIBUTION.
+    
+    ENSURE LONG ENOUGH TIMES ARE INCLUDED SUCH THAT OTH CALCUALTED CUMULANT IS WITHIN epsilon OF 1. 
+    '''
+
+    dt = time[1] - time[0] # Assuming a fixed time step
+    M0 = dt*sum(FPTD)
+
+    if abs(M0 - 1) > epsilon:
+        raise ValueError("Include longer times to ensure accuracy of numerically calculated moments.")
+    
+    if k==0:
+        return M0
+    else:
+        return dt*sum(np.multiply(FPTD, np.power(time, k)))
+    
