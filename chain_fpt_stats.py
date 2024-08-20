@@ -19,7 +19,7 @@ Nrange = range(2, 7)
 k = 1 # Rate for site-site transitions
 k0 = 1 # Leak rate
 
-FPTD_N = np.zeros([len(Nrange), len(time)]) # Array to store full FPTDs at every N
+FPTD_N = np.zeros([len(Nrange), len(time)]) # Arraygit to store full FPTDs at every N
 M1_N, M2_N = np.zeros(len(Nrange)), np.zeros(len(Nrange)) # Arrays to store first and second moments of FPTD at each N
 
 for i in range(len(Nrange)):
