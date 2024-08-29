@@ -13,7 +13,7 @@ from _utils import *
 import rate_matrices as rm
 
 # Set up time array
-dt = 0.01; tmax = 100
+dt = 0.03; tmax = 150
 time = np.arange(0, tmax, dt)
 
 # We will analyze how FPT statistics vary with N so set a range of chain lengths to analyze
@@ -22,7 +22,7 @@ k = 1 # Rate for site-site transitions in the uniform chain
 kA = 2/3; kB = 2 # Rates in the two different domains of the modular chain
 m = 1 # Segment length parameter for modular chains
 b = 0 # bias
-k0 = 1 # Leak rate
+# k0 = 1 # Leak rate
 
 FPTD_N_uni = np.zeros([len(Nrange), len(time)]) # Array to store full FPTDs at every N for uniform chains
 FPTD_N_mod = np.zeros([len(Nrange), len(time)]) # Array to store full FPTDs at every N for modular chains
@@ -39,7 +39,7 @@ for i in range(len(Nrange)):
     start_site = 0; leak_site = N - 1 # Choice of start and leak sites
 
     # Calculate the exact FPTD for this rate matrix and choice of start/leak sites    
-    FPTD = first_passage_time_dist(L, start_site, leak_site, k0, time)
+    FPTD = first_passage_time_dist(L, start_site, leak_site, k, time)
     FPTD_N_uni[i, :] = FPTD
 
     # Save the first two moments
@@ -54,13 +54,22 @@ for i in range(len(Nrange)):
     L = rm.L_modular(N, m, kA, kB, b)
     start_site = 0; leak_site = N - 1 # Choice of start and leak sites
 
-    # Calculate the exact FPTD for this rate matrix and choice of start/leak sites    
-    FPTD = first_passage_time_dist(L, start_site, leak_site, k0, time)
+    # Calculate the exact FPTD for this rate matrix and choice of start/leak sites
+    if (N+1)//m%2==0:
+        k_leak = kA
+    elif (N+1)//m%2==1:
+        k_leak = kB    
+    FPTD = first_passage_time_dist(L, start_site, leak_site, k_leak, time)
     FPTD_N_mod[i, :] = FPTD
 
     # Save the first two moments
     M1_N_mod[i] = fpt_moments(time, FPTD, 1)
     M2_N_mod[i] = fpt_moments(time, FPTD, 2)
+
+
+# Calculate randomness parameter
+r_uni = (M2_N_uni - M1_N_uni**2)/M1_N_uni**2
+r_mod = (M2_N_mod - M1_N_mod**2)/M1_N_mod**2
 
 # Plot the first passage time distributions at each N as a function of time for each chain type
 plt.subplot(1,2,1)
@@ -74,10 +83,11 @@ plt.show()
 
 # Show a scatter plot of the first two moments
 fig, ax = plt.subplots()
-ax.scatter(M1_N_uni, M2_N_uni, label="Uniform")
+ax.scatter(M1_N_uni, r_uni, label="Uniform")
 for i, N in enumerate(Nrange):
-    ax.annotate("N = "+str(N), (M1_N_uni[i], M2_N_uni[i]+4))
-ax.scatter(M1_N_mod, M2_N_mod, label="Modular")
+    ax.annotate("N = "+str(N), (M1_N_uni[i], r_uni[i]))
+ax.scatter(M1_N_mod, r_mod, label="Modular")
 ax.set_xlabel(r"$\langle t\rangle$")
-ax.set_ylabel(r"$\langle t^2\rangle$")
+# ax.set_ylabel(r"$\langle t^2\rangle$")
+ax.set_ylabel("$r$")
 plt.show()
